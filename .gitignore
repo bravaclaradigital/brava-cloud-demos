@@ -1,0 +1,70 @@
+# Terraform
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+!*.tfvars.json
+.terraform/
+.terraform.lock.hcl
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+.env
+.env.local
+
+# Bicep
+*.jinja2
+*.json (generated from bicep)
+bicep-cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Credentials and Secrets
+*.pem
+*.key
+*.pub
+*.crt
+*.pfx
+*.p12
+.aws/
+.azure/
+.gcp/
+credentials/
+secrets/
+*.env
+.env*
+!.env.example
+cloud-creds/
+api-keys/
+
+# CI/CD
+.github/secrets/
+.gitignore.local
+
+# Logs
+*.log
+logs/
+
+# Build artifacts
+dist/
+build/
+*.out
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Internal documentation (for demo purposes only)
+DEPLOYMENT_GUIDE_INTERNAL.md
+DEPLOYMENT.md

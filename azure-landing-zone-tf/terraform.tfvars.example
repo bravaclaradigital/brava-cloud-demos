@@ -1,0 +1,13 @@
+# Azure subscription
+azure_subscription_id = "00000000-0000-0000-0000-000000000000"
+azure_location        = "eastus"
+
+# Environment
+environment = "demo"
+cost_center = "brava-demos"
+
+# Networking
+vnet_address_space         = ["10.0.0.0/16"]
+jumphost_subnet_prefix     = ["10.0.1.0/24"]
+workload_subnet_prefix     = ["10.0.10.0/24"]
+management_subnet_prefix   = ["10.0.20.0/24"]

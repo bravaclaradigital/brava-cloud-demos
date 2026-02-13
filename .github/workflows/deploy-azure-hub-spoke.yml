@@ -1,0 +1,78 @@
+name: Deploy Azure Hub-Spoke
+
+on:
+  pull_request:
+    paths:
+      - 'azure-hub-spoke-bicep/**'
+      - '.github/workflows/deploy-azure-hub-spoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'azure-hub-spoke-bicep/**'
+  workflow_dispatch:
+
+env:
+  AZURE_REGION: eastus
+  RESOURCE_GROUP: rg-brava-hub-spoke-demo
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./azure-hub-spoke-bicep
+    
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Create Resource Group
+        run: |
+          az group create \
+            --name ${{ env.RESOURCE_GROUP }} \
+            --location ${{ env.AZURE_REGION }} \
+            --tags Environment=demo Project=brava-cloud-demos
+      
+      - name: Bicep Lint
+        run: az bicep lint --file main.bicep
+      
+      - name: Validate Bicep Deployment
+        run: |
+          az deployment group validate \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --template-file main.bicep \
+            --parameters parameters.bicepparam
+  
+  deploy:
+    runs-on: ubuntu-latest
+    needs: validate
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    defaults:
+      run:
+        working-directory: ./azure-hub-spoke-bicep
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Deploy Bicep
+        run: |
+          az deployment group create \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --template-file main.bicep \
+            --parameters parameters.bicepparam
