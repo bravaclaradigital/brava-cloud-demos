@@ -19,7 +19,7 @@ provider "azurerm" {
 module "rg_management" {
   source = "./modules/resource-group"
   
-  name     = "rg-brava-management-\"
+  name     = "rg-brava-management-${var.environment}"
   location = var.azure_location
   environment = var.environment
   cost_center = var.cost_center
@@ -36,7 +36,7 @@ module "rg_management" {
 module "rg_network" {
   source = "./modules/resource-group"
   
-  name     = "rg-brava-network-\"
+  name     = "rg-brava-network-${var.environment}"
   location = var.azure_location
   environment = var.environment
   cost_center = var.cost_center
@@ -53,7 +53,7 @@ module "rg_network" {
 module "rg_workload" {
   source = "./modules/resource-group"
   
-  name     = "rg-brava-workload-\"
+  name     = "rg-brava-workload-${var.environment}"
   location = var.azure_location
   environment = var.environment
   cost_center = var.cost_center
