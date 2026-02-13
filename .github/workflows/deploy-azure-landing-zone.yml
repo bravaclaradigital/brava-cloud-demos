@@ -1,15 +1,6 @@
 name: Deploy Azure Landing Zone
 
 on:
-  pull_request:
-    paths:
-      - 'azure-landing-zone-tf/**'
-      - '.github/workflows/deploy-azure-landing-zone.yml'
-  push:
-    branches:
-      - main
-    paths:
-      - 'azure-landing-zone-tf/**'
   workflow_dispatch:
 
 env:

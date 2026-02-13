@@ -1,15 +1,6 @@
 name: Deploy Azure Hub-Spoke
 
 on:
-  pull_request:
-    paths:
-      - 'azure-hub-spoke-bicep/**'
-      - '.github/workflows/deploy-azure-hub-spoke.yml'
-  push:
-    branches:
-      - main
-    paths:
-      - 'azure-hub-spoke-bicep/**'
   workflow_dispatch:
 
 env:

@@ -1,15 +1,6 @@
 name: Deploy AWS Cloud CI/CD
 
 on:
-  pull_request:
-    paths:
-      - 'aws-cloud-cicd-tf/**'
-      - '.github/workflows/deploy-aws-cloud-cicd.yml'
-  push:
-    branches:
-      - main
-    paths:
-      - 'aws-cloud-cicd-tf/**'
   workflow_dispatch:
 
 env:
