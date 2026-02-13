@@ -10,37 +10,6 @@ Deploy a **production-ready hub-spoke network topology** with Azure Bicep for mu
 ✅ **Azure Bastion** — Jumphost without public IPs  
 ✅ **Network Security Groups** — Per-subnet security rules  
 
-## Quick Start
-
-### Prerequisites
-- Azure subscription with Contributor access
-- Azure CLI with Bicep support
-- Git
-
-### Deployment
-
-```powershell
-# 1. Create resource group
-az group create --name rg-brava-hub-spoke-demo --location eastus
-
-# 2. Deploy with Bicep
-az deployment group create `
-  --resource-group rg-brava-hub-spoke-demo `
-  --template-file main.bicep `
-  --parameters parameters.bicepparam
-
-# 3. View outputs
-az deployment group show `
-  --resource-group rg-brava-hub-spoke-demo `
-  --name main
-```
-
-### Cleanup
-
-```powershell
-az group delete --resource-group rg-brava-hub-spoke-demo --yes
-```
-
 ## Architecture
 
 ```
@@ -70,20 +39,7 @@ az group delete --resource-group rg-brava-hub-spoke-demo --yes
 
 ## Key Outputs
 
-After deployment, you'll receive:
+After deployment:
 - Hub VNet ID
 - Spoke VNet IDs
 - Bastion public IP for access
-
-## Cost Estimate
-
-**Deployment:** ~$10-20/day (Bastion and NAT costs)  
-**Cleanup:** $0 (resources destroyed)
-
-## Talking Points
-
-- "Hub-spoke scales from 10 to 1000+ spokes, all managed centrally"
-- "Bastion eliminates public IPs — no SSH key exposure"
-- "Spokes can be managed by different teams while hub enforces security"
-- "This follows the Azure Well-Architected Framework"
-
