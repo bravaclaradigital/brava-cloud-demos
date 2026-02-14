@@ -41,11 +41,20 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       
-      - name: Extract Subscription ID
+      - name: Extract Azure Credentials
         id: azure-creds
-        run: echo "subscription_id=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.subscriptionId')" >> $GITHUB_OUTPUT
+        run: |
+          echo "subscription_id=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.subscriptionId')" >> $GITHUB_OUTPUT
+          echo "client_id=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.clientId')" >> $GITHUB_OUTPUT
+          echo "client_secret=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.clientSecret')" >> $GITHUB_OUTPUT
+          echo "tenant_id=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.tenantId')" >> $GITHUB_OUTPUT
       
       - name: Terraform Init
+        env:
+          ARM_CLIENT_ID: ${{ steps.azure-creds.outputs.client_id }}
+          ARM_CLIENT_SECRET: ${{ steps.azure-creds.outputs.client_secret }}
+          ARM_SUBSCRIPTION_ID: ${{ steps.azure-creds.outputs.subscription_id }}
+          ARM_TENANT_ID: ${{ steps.azure-creds.outputs.tenant_id }}
         run: terraform init
       
       - name: Terraform Format Check
@@ -94,11 +103,20 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       
-      - name: Extract Subscription ID
+      - name: Extract Azure Credentials
         id: azure-creds
-        run: echo "subscription_id=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.subscriptionId')" >> $GITHUB_OUTPUT
+        run: |
+          echo "subscription_id=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.subscriptionId')" >> $GITHUB_OUTPUT
+          echo "client_id=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.clientId')" >> $GITHUB_OUTPUT
+          echo "client_secret=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.clientSecret')" >> $GITHUB_OUTPUT
+          echo "tenant_id=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.tenantId')" >> $GITHUB_OUTPUT
       
       - name: Terraform Init
+        env:
+          ARM_CLIENT_ID: ${{ steps.azure-creds.outputs.client_id }}
+          ARM_CLIENT_SECRET: ${{ steps.azure-creds.outputs.client_secret }}
+          ARM_SUBSCRIPTION_ID: ${{ steps.azure-creds.outputs.subscription_id }}
+          ARM_TENANT_ID: ${{ steps.azure-creds.outputs.tenant_id }}
         run: terraform init
       
       - name: Terraform Apply
@@ -126,11 +144,20 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       
-      - name: Extract Subscription ID
+      - name: Extract Azure Credentials
         id: azure-creds
-        run: echo "subscription_id=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.subscriptionId')" >> $GITHUB_OUTPUT
+        run: |
+          echo "subscription_id=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.subscriptionId')" >> $GITHUB_OUTPUT
+          echo "client_id=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.clientId')" >> $GITHUB_OUTPUT
+          echo "client_secret=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.clientSecret')" >> $GITHUB_OUTPUT
+          echo "tenant_id=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.tenantId')" >> $GITHUB_OUTPUT
       
       - name: Terraform Init
+        env:
+          ARM_CLIENT_ID: ${{ steps.azure-creds.outputs.client_id }}
+          ARM_CLIENT_SECRET: ${{ steps.azure-creds.outputs.client_secret }}
+          ARM_SUBSCRIPTION_ID: ${{ steps.azure-creds.outputs.subscription_id }}
+          ARM_TENANT_ID: ${{ steps.azure-creds.outputs.tenant_id }}
         run: terraform init
       
       - name: Terraform Destroy
