@@ -13,16 +13,14 @@ resource vnetSpoke 'Microsoft.Network/virtualNetworks@2023-11-01' = {
         vnetAddressSpace
       ]
     }
+    subnets: [for subnet in subnets: {
+      name: subnet.name
+      properties: {
+        addressPrefix: subnet.addressPrefix
+      }
+    }]
   }
 }
-
-resource subnetsRes 'Microsoft.Network/virtualNetworks/subnets@2023-11-01' = [for subnet in subnets: {
-  parent: vnetSpoke
-  name: subnet.name
-  properties: {
-    addressPrefix: subnet.addressPrefix
-  }
-}]
 
 output vnetId string = vnetSpoke.id
 output vnetName string = vnetSpoke.name

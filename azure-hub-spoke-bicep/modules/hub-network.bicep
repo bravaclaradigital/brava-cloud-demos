@@ -12,16 +12,14 @@ resource vnetHub 'Microsoft.Network/virtualNetworks@2023-11-01' = {
         vnetAddressSpace
       ]
     }
+    subnets: [for subnet in subnets: {
+      name: subnet.name
+      properties: {
+        addressPrefix: subnet.addressPrefix
+      }
+    }]
   }
 }
-
-resource subnetsRes 'Microsoft.Network/virtualNetworks/subnets@2023-11-01' = [for subnet in subnets: {
-  parent: vnetHub
-  name: subnet.name
-  properties: {
-    addressPrefix: subnet.addressPrefix
-  }
-}]
 
 resource nsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
   name: 'nsg-hub-${environment}'
@@ -60,9 +58,6 @@ resource bastionPublicIp 'Microsoft.Network/publicIPAddresses@2023-11-01' = {
 resource bastion 'Microsoft.Network/bastionHosts@2023-11-01' = {
   name: 'bastion-hub-${environment}'
   location: location
-  dependsOn: [
-    subnetsRes
-  ]
   properties: {
     ipConfigurations: [
       {
