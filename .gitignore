@@ -68,4 +68,5 @@ Thumbs.db
 .DS_Store
 
 # Internal documentation (for demo purposes only)
+DEMO-GUIDE.md
 DEPLOYMENT.md
