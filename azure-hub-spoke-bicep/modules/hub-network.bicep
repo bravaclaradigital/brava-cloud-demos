@@ -58,6 +58,9 @@ resource bastionPublicIp 'Microsoft.Network/publicIPAddresses@2023-11-01' = {
 resource bastion 'Microsoft.Network/bastionHosts@2023-11-01' = {
   name: 'bastion-hub-${environment}'
   location: location
+  sku: {
+    name: 'Basic'
+  }
   properties: {
     ipConfigurations: [
       {
@@ -78,3 +81,4 @@ resource bastion 'Microsoft.Network/bastionHosts@2023-11-01' = {
 output vnetId string = vnetHub.id
 output vnetName string = vnetHub.name
 output bastionPublicIp string = bastionPublicIp.properties.ipAddress
+output bastionHostname string = bastion.properties.dnsName

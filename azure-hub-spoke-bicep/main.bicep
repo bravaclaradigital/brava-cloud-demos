@@ -83,3 +83,4 @@ output hubVnetId string = hub.outputs.vnetId
 output spoke1VnetId string = spoke1.outputs.vnetId
 output spoke2VnetId string = spoke2.outputs.vnetId
 output bastionPublicIp string = hub.outputs.bastionPublicIp
+output bastionHostname string = hub.outputs.bastionHostname
