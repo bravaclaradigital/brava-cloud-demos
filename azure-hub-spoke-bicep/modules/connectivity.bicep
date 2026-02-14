@@ -1,3 +1,4 @@
+param hubVnetId string
 param hubVnetName string
 param spoke1VnetId string
 param spoke1VnetName string
@@ -37,7 +38,7 @@ resource spoke1ToHub 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2
   name: '${spoke1VnetName}/peering-to-hub'
   properties: {
     remoteVirtualNetwork: {
-      id: resourceId('Microsoft.Network/virtualNetworks', hubVnetName)
+      id: hubVnetId
     }
     allowVirtualNetworkAccess: true
     allowForwardedTraffic: true
@@ -51,7 +52,7 @@ resource spoke2ToHub 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2
   name: '${spoke2VnetName}/peering-to-hub'
   properties: {
     remoteVirtualNetwork: {
-      id: resourceId('Microsoft.Network/virtualNetworks', hubVnetName)
+      id: hubVnetId
     }
     allowVirtualNetworkAccess: true
     allowForwardedTraffic: true

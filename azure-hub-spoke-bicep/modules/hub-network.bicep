@@ -45,6 +45,18 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
   }
 }
 
+resource bastionPublicIp 'Microsoft.Network/publicIPAddresses@2023-11-01' = {
+  name: 'pip-bastion-${environment}'
+  location: location
+  sku: {
+    name: 'Standard'
+  }
+  properties: {
+    publicIPAllocationMethod: 'Static'
+    publicIPAddressVersion: 'IPv4'
+  }
+}
+
 resource bastion 'Microsoft.Network/bastionHosts@2023-11-01' = {
   name: 'bastion-hub-${environment}'
   location: location
@@ -65,17 +77,6 @@ resource bastion 'Microsoft.Network/bastionHosts@2023-11-01' = {
         }
       }
     ]
-  }
-}
-
-resource bastionPublicIp 'Microsoft.Network/publicIPAddresses@2023-11-01' = {
-  name: 'pip-bastion-${environment}'
-  location: location
-  properties: {
-    publicIPAllocationMethod: 'Static'
-  }
-  sku: {
-    name: 'Standard'
   }
 }
 

@@ -70,6 +70,7 @@ module spoke2 'modules/spoke-network.bicep' = {
 module connectivity 'modules/connectivity.bicep' = {
   name: 'connectivity-deployment'
   params: {
+    hubVnetId: hub.outputs.vnetId
     hubVnetName: hub.outputs.vnetName
     spoke1VnetId: spoke1.outputs.vnetId
     spoke1VnetName: spoke1.outputs.vnetName
