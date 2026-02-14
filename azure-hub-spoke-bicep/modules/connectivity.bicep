@@ -7,7 +7,7 @@ param spoke2VnetId string
 param spoke2VnetName string
 
 resource peering1 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = {
-  name: '\/peering-to-spoke1'
+  name: '${hubVnetName}/peering-to-spoke1'
   properties: {
     remoteVirtualNetwork: {
       id: spoke1VnetId
@@ -18,7 +18,7 @@ resource peering1 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023
 }
 
 resource peering2 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = {
-  name: '\/peering-to-spoke2'
+  name: '${hubVnetName}/peering-to-spoke2'
   properties: {
     remoteVirtualNetwork: {
       id: spoke2VnetId

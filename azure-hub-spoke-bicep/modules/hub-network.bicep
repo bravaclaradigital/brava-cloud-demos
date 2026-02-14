@@ -4,7 +4,7 @@ param vnetAddressSpace string
 param subnets array
 
 resource vnetHub 'Microsoft.Network/virtualNetworks@2023-11-01' = {
-  name: 'vnet-hub-\'
+  name: 'vnet-hub-${environment}'
   location: location
   properties: {
     addressSpace: {
@@ -24,7 +24,7 @@ resource subnetsRes 'Microsoft.Network/virtualNetworks/subnets@2023-11-01' = [fo
 }]
 
 resource nsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
-  name: 'nsg-hub-\'
+  name: 'nsg-hub-${environment}'
   location: location
   properties: {
     securityRules: [
@@ -46,7 +46,7 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
 }
 
 resource bastion 'Microsoft.Network/bastionHosts@2023-11-01' = {
-  name: 'bastion-hub-\'
+  name: 'bastion-hub-${environment}'
   location: location
   properties: {
     ipConfigurations: [
@@ -54,7 +54,7 @@ resource bastion 'Microsoft.Network/bastionHosts@2023-11-01' = {
         name: 'IpConf'
         properties: {
           subnet: {
-            id: '\/subnets/snet-bastion'
+            id: '${vnetHub.id}/subnets/snet-bastion'
           }
           publicIPAddress: {
             id: bastionPublicIp.id
@@ -66,7 +66,7 @@ resource bastion 'Microsoft.Network/bastionHosts@2023-11-01' = {
 }
 
 resource bastionPublicIp 'Microsoft.Network/publicIPAddresses@2023-11-01' = {
-  name: 'pip-bastion-\'
+  name: 'pip-bastion-${environment}'
   location: location
   properties: {
     publicIPAllocationMethod: 'Static'
