@@ -6,6 +6,8 @@
 !*.tfvars.json
 .terraform/
 .terraform.lock.hcl
+tfplan
+*.tfplan
 crash.log
 crash.*.log
 override.tf
@@ -66,5 +68,4 @@ Thumbs.db
 .DS_Store
 
 # Internal documentation (for demo purposes only)
-DEPLOYMENT_GUIDE_INTERNAL.md
 DEPLOYMENT.md

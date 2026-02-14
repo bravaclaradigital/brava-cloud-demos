@@ -32,6 +32,10 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       
+      - name: Extract Subscription ID
+        id: azure-creds
+        run: echo "subscription_id=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.subscriptionId')" >> $GITHUB_OUTPUT
+      
       - name: Terraform Init
         run: terraform init
       
@@ -43,7 +47,7 @@ jobs:
         run: terraform validate
       
       - name: Terraform Plan
-        run: terraform plan -out=tfplan -lock=false
+        run: terraform plan -out=tfplan -lock=false -var="azure_subscription_id=${{ steps.azure-creds.outputs.subscription_id }}"
       
       - name: Comment PR with Plan
         if: github.event_name == 'pull_request'
@@ -81,8 +85,12 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       
+      - name: Extract Subscription ID
+        id: azure-creds
+        run: echo "subscription_id=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.subscriptionId')" >> $GITHUB_OUTPUT
+      
       - name: Terraform Init
         run: terraform init
       
       - name: Terraform Apply
-        run: terraform apply -auto-approve -lock=false
+        run: terraform apply -auto-approve -lock=false -var="azure_subscription_id=${{ steps.azure-creds.outputs.subscription_id }}"
