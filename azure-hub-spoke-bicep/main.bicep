@@ -66,6 +66,23 @@ module spoke2 'modules/spoke-network.bicep' = {
   }
 }
 
+// Spoke 3 - Monitoring Workload
+module spoke3 'modules/spoke-network.bicep' = {
+  name: 'spoke3-deployment'
+  params: {
+    location: location
+    environment: environment
+    spokeName: 'monitoring'
+    vnetAddressSpace: '10.3.0.0/24'
+    subnets: [
+      {
+        name: 'snet-monitoring'
+        addressPrefix: '10.3.0.0/24'
+      }
+    ]
+  }
+}
+
 // Connectivity (Peering)
 module connectivity 'modules/connectivity.bicep' = {
   name: 'connectivity-deployment'
@@ -76,11 +93,14 @@ module connectivity 'modules/connectivity.bicep' = {
     spoke1VnetName: spoke1.outputs.vnetName
     spoke2VnetId: spoke2.outputs.vnetId
     spoke2VnetName: spoke2.outputs.vnetName
+    spoke3VnetId: spoke3.outputs.vnetId
+    spoke3VnetName: spoke3.outputs.vnetName
   }
 }
 
 output hubVnetId string = hub.outputs.vnetId
 output spoke1VnetId string = spoke1.outputs.vnetId
 output spoke2VnetId string = spoke2.outputs.vnetId
+output spoke3VnetId string = spoke3.outputs.vnetId
 output bastionPublicIp string = hub.outputs.bastionPublicIp
 output bastionHostname string = hub.outputs.bastionHostname
