@@ -65,6 +65,11 @@ jobs:
         run: terraform validate
       
       - name: Terraform Plan
+        env:
+          ARM_CLIENT_ID: ${{ steps.azure-creds.outputs.client_id }}
+          ARM_CLIENT_SECRET: ${{ steps.azure-creds.outputs.client_secret }}
+          ARM_SUBSCRIPTION_ID: ${{ steps.azure-creds.outputs.subscription_id }}
+          ARM_TENANT_ID: ${{ steps.azure-creds.outputs.tenant_id }}
         run: terraform plan -out=tfplan -lock=false -var="azure_subscription_id=${{ steps.azure-creds.outputs.subscription_id }}"
       
       - name: Comment PR with Plan
@@ -120,6 +125,11 @@ jobs:
         run: terraform init
       
       - name: Terraform Apply
+        env:
+          ARM_CLIENT_ID: ${{ steps.azure-creds.outputs.client_id }}
+          ARM_CLIENT_SECRET: ${{ steps.azure-creds.outputs.client_secret }}
+          ARM_SUBSCRIPTION_ID: ${{ steps.azure-creds.outputs.subscription_id }}
+          ARM_TENANT_ID: ${{ steps.azure-creds.outputs.tenant_id }}
         run: terraform apply -auto-approve -lock=false -var="azure_subscription_id=${{ steps.azure-creds.outputs.subscription_id }}"
   
   destroy:
@@ -161,4 +171,9 @@ jobs:
         run: terraform init
       
       - name: Terraform Destroy
+        env:
+          ARM_CLIENT_ID: ${{ steps.azure-creds.outputs.client_id }}
+          ARM_CLIENT_SECRET: ${{ steps.azure-creds.outputs.client_secret }}
+          ARM_SUBSCRIPTION_ID: ${{ steps.azure-creds.outputs.subscription_id }}
+          ARM_TENANT_ID: ${{ steps.azure-creds.outputs.tenant_id }}
         run: terraform destroy -auto-approve -lock=false -var="azure_subscription_id=${{ steps.azure-creds.outputs.subscription_id }}"
