@@ -10,19 +10,19 @@ module hub 'modules/hub-network.bicep' = {
   params: {
     location: location
     environment: environment
-    vnetAddressSpace: '10.0.0.0/23'
+    vnetAddressSpace: '10.0.0.0/22'
     subnets: [
       {
-        name: 'snet-gateway'
-        addressPrefix: '10.0.0.0/25'
+        name: 'GatewaySubnet'
+        addressPrefix: '10.0.0.0/27'
       }
       {
-        name: 'snet-firewall'
-        addressPrefix: '10.0.0.128/25'
+        name: 'AzureFirewallSubnet'
+        addressPrefix: '10.0.0.64/26'
       }
       {
-        name: 'snet-bastion'
-        addressPrefix: '10.0.1.0/24'
+        name: 'AzureBastionSubnet'
+        addressPrefix: '10.0.1.0/26'
       }
     ]
   }
@@ -70,8 +70,6 @@ module spoke2 'modules/spoke-network.bicep' = {
 module connectivity 'modules/connectivity.bicep' = {
   name: 'connectivity-deployment'
   params: {
-    location: location
-    hubVnetId: hub.outputs.vnetId
     hubVnetName: hub.outputs.vnetName
     spoke1VnetId: spoke1.outputs.vnetId
     spoke1VnetName: spoke1.outputs.vnetName

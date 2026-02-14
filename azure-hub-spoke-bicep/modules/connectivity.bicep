@@ -1,12 +1,11 @@
-param location string
-param hubVnetId string
 param hubVnetName string
 param spoke1VnetId string
 param spoke1VnetName string
 param spoke2VnetId string
 param spoke2VnetName string
 
-resource peering1 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = {
+// Hub to Spoke1 peering
+resource hubToSpoke1 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = {
   name: '${hubVnetName}/peering-to-spoke1'
   properties: {
     remoteVirtualNetwork: {
@@ -14,10 +13,13 @@ resource peering1 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023
     }
     allowVirtualNetworkAccess: true
     allowForwardedTraffic: true
+    allowGatewayTransit: false
+    useRemoteGateways: false
   }
 }
 
-resource peering2 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = {
+// Hub to Spoke2 peering
+resource hubToSpoke2 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = {
   name: '${hubVnetName}/peering-to-spoke2'
   properties: {
     remoteVirtualNetwork: {
@@ -25,6 +27,36 @@ resource peering2 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023
     }
     allowVirtualNetworkAccess: true
     allowForwardedTraffic: true
+    allowGatewayTransit: false
+    useRemoteGateways: false
+  }
+}
+
+// Spoke1 to Hub peering
+resource spoke1ToHub 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = {
+  name: '${spoke1VnetName}/peering-to-hub'
+  properties: {
+    remoteVirtualNetwork: {
+      id: resourceId('Microsoft.Network/virtualNetworks', hubVnetName)
+    }
+    allowVirtualNetworkAccess: true
+    allowForwardedTraffic: true
+    allowGatewayTransit: false
+    useRemoteGateways: false
+  }
+}
+
+// Spoke2 to Hub peering
+resource spoke2ToHub 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2023-11-01' = {
+  name: '${spoke2VnetName}/peering-to-hub'
+  properties: {
+    remoteVirtualNetwork: {
+      id: resourceId('Microsoft.Network/virtualNetworks', hubVnetName)
+    }
+    allowVirtualNetworkAccess: true
+    allowForwardedTraffic: true
+    allowGatewayTransit: false
+    useRemoteGateways: false
   }
 }
 

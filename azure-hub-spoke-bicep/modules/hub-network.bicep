@@ -48,13 +48,16 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2023-11-01' = {
 resource bastion 'Microsoft.Network/bastionHosts@2023-11-01' = {
   name: 'bastion-hub-${environment}'
   location: location
+  dependsOn: [
+    subnetsRes
+  ]
   properties: {
     ipConfigurations: [
       {
         name: 'IpConf'
         properties: {
           subnet: {
-            id: '${vnetHub.id}/subnets/snet-bastion'
+            id: '${vnetHub.id}/subnets/AzureBastionSubnet'
           }
           publicIPAddress: {
             id: bastionPublicIp.id
