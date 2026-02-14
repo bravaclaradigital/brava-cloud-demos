@@ -21,11 +21,11 @@ variable "tags" {
 }
 
 resource "aws_security_group" "this" {
-  name        = "sg-brava-${var.environment}"
+  name        = "brava-${var.environment}-sg"
   description = "Brava Cloud Demos security group"
   vpc_id      = var.vpc_id
 
-  tags = merge(var.tags, { Name = "sg-${var.environment}" })
+  tags = merge(var.tags, { Name = "brava-${var.environment}-sg" })
 }
 
 resource "aws_security_group_rule" "ingress" {
