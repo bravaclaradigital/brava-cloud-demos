@@ -7,7 +7,7 @@ variable "tags" {
 }
 
 resource "aws_iam_role" "ec2_role" {
-  name               = "role-brava-ec2-\"
+  name = "role-brava-ec2-${var.environment}"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -20,13 +20,13 @@ resource "aws_iam_role" "ec2_role" {
       }
     ]
   })
-  
+
   tags = var.tags
 }
 
 resource "aws_iam_role_policy" "ec2_policy" {
-  name   = "policy-brava-ec2-\"
-  role   = aws_iam_role.ec2_role.id
+  name = "policy-brava-ec2-${var.environment}"
+  role = aws_iam_role.ec2_role.id
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -53,7 +53,7 @@ resource "aws_iam_role_policy" "ec2_policy" {
 }
 
 resource "aws_iam_instance_profile" "ec2_profile" {
-  name = "profile-brava-ec2-\"
+  name = "profile-brava-ec2-${var.environment}"
   role = aws_iam_role.ec2_role.name
 }
 

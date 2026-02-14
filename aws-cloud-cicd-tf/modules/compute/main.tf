@@ -25,12 +25,12 @@ variable "tags" {
 data "aws_ami" "amazon_linux_2" {
   most_recent = true
   owners      = ["amazon"]
-  
+
   filter {
     name   = "name"
     values = ["amzn2-ami-hvm-*-x86_64-gp2"]
   }
-  
+
   filter {
     name   = "virtualization-type"
     values = ["hvm"]
@@ -43,13 +43,13 @@ resource "aws_instance" "this" {
   subnet_id              = var.subnet_id
   vpc_security_group_ids = [var.security_group_id]
   iam_instance_profile   = var.iam_instance_profile_id
-  
+
   root_block_device {
     volume_type           = "gp3"
     volume_size           = 20
     delete_on_termination = true
   }
-  
+
   user_data = base64encode(<<-EOF
     #!/bin/bash
     yum update -y
@@ -59,8 +59,8 @@ resource "aws_instance" "this" {
     echo "<h1>Brava Cloud Demos - AWS Cloud CI/CD</h1>" > /var/www/html/index.html
   EOF
   )
-  
-  tags = merge(var.tags, { Name = "ec2-brava-\" })
+
+  tags = merge(var.tags, { Name = "ec2-brava-${var.environment}" })
 }
 
 output "instance_id" {

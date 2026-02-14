@@ -2,6 +2,15 @@ name: Deploy Azure Landing Zone
 
 on:
   workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'apply'
+        type: choice
+        options:
+          - apply
+          - destroy
 
 env:
   TERRAFORM_VERSION: 1.5.0
@@ -66,7 +75,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: terraform
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && github.event.inputs.action == 'apply'
     defaults:
       run:
         working-directory: ./azure-landing-zone-tf
@@ -94,3 +103,35 @@ jobs:
       
       - name: Terraform Apply
         run: terraform apply -auto-approve -lock=false -var="azure_subscription_id=${{ steps.azure-creds.outputs.subscription_id }}"
+  
+  destroy:
+    runs-on: ubuntu-latest
+    needs: terraform
+    if: github.ref == 'refs/heads/main' && github.event.inputs.action == 'destroy'
+    defaults:
+      run:
+        working-directory: ./azure-landing-zone-tf
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Extract Subscription ID
+        id: azure-creds
+        run: echo "subscription_id=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.subscriptionId')" >> $GITHUB_OUTPUT
+      
+      - name: Terraform Init
+        run: terraform init
+      
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve -lock=false -var="azure_subscription_id=${{ steps.azure-creds.outputs.subscription_id }}"
