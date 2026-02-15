@@ -70,3 +70,4 @@ Thumbs.db
 # Internal documentation (for demo purposes only)
 DEMO-GUIDE.md
 DEPLOYMENT.md
+setup-cloud-demos.ps1
