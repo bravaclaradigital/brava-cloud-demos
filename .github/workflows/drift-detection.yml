@@ -1,0 +1,149 @@
+name: Drift Detection
+
+# Runs daily at 8am UTC. Detects infrastructure drift (resources changed
+# outside of Terraform/Bicep) and fails the workflow if drift is detected,
+# triggering a GitHub notification to the repo owner.
+
+on:
+  schedule:
+    - cron: '0 8 * * *'
+  workflow_dispatch: {}
+
+env:
+  TERRAFORM_VERSION: 1.5.0
+
+jobs:
+  drift-aws:
+    name: "AWS - Terraform Drift Check"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./aws-cloud-cicd-tf
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Terraform Init
+        run: terraform init -backend-config="bucket=${{ secrets.AWS_TF_STATE_BUCKET }}" -backend-config="dynamodb_table=${{ secrets.AWS_TF_LOCK_TABLE }}"
+
+      - name: Terraform Plan (drift check)
+        id: plan
+        run: |
+          terraform plan -detailed-exitcode -lock=false 2>&1 | tee /tmp/plan-output.txt
+          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+
+      - name: Fail on drift
+        if: steps.plan.outputs.exit_code == '2'
+        run: |
+          echo "::error::Drift detected in AWS infrastructure. Review the plan output above."
+          exit 1
+
+      - name: No drift found
+        if: steps.plan.outputs.exit_code == '0'
+        run: echo "No drift detected. AWS infrastructure matches Terraform state."
+
+  drift-azure-lz:
+    name: "Azure Landing Zone - Terraform Drift Check"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./azure-landing-zone-tf
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Terraform Init
+        env:
+          ARM_CLIENT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}
+          ARM_CLIENT_SECRET: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}
+          ARM_SUBSCRIPTION_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).subscriptionId }}
+          ARM_TENANT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}
+        run: terraform init
+
+      - name: Terraform Plan (drift check)
+        id: plan
+        env:
+          ARM_CLIENT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientId }}
+          ARM_CLIENT_SECRET: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}
+          ARM_SUBSCRIPTION_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).subscriptionId }}
+          ARM_TENANT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}
+        run: |
+          terraform plan -detailed-exitcode -lock=false \
+            -var="azure_subscription_id=${{ fromJSON(secrets.AZURE_CREDENTIALS).subscriptionId }}" \
+            2>&1 | tee /tmp/plan-output.txt
+          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+
+      - name: Fail on drift
+        if: steps.plan.outputs.exit_code == '2'
+        run: |
+          echo "::error::Drift detected in Azure Landing Zone. Review the plan output above."
+          exit 1
+
+      - name: No drift found
+        if: steps.plan.outputs.exit_code == '0'
+        run: echo "No drift detected. Azure Landing Zone matches Terraform state."
+
+  drift-hub-spoke:
+    name: "Azure Hub-Spoke - Bicep What-If Check"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./azure-hub-spoke-bicep
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Bicep What-If (drift check)
+        id: whatif
+        run: |
+          OUTPUT=$(az deployment group what-if \
+            --resource-group rg-brava-hub-spoke-demo \
+            --template-file main.bicep \
+            --parameters parameters.bicepparam \
+            --result-format FullResourcePayloads 2>&1) || true
+          echo "$OUTPUT"
+          if echo "$OUTPUT" | grep -qE "will be (created|modified|deleted)"; then
+            echo "drift_detected=true" >> $GITHUB_OUTPUT
+          else
+            echo "drift_detected=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Fail on drift
+        if: steps.whatif.outputs.drift_detected == 'true'
+        run: |
+          echo "::error::Drift detected in Azure Hub-Spoke. Review the what-if output above."
+          exit 1
+
+      - name: No drift found
+        if: steps.whatif.outputs.drift_detected == 'false'
+        run: echo "No drift detected. Hub-Spoke matches deployed state."

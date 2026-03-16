@@ -28,6 +28,11 @@ resource "aws_security_group" "this" {
   tags = merge(var.tags, { Name = "brava-${var.environment}-sg" })
 }
 
+# DEMO NOTE: Ingress rules are intentionally permissive (0.0.0.0/0) for
+# demonstration speed and simplicity. In production, restrict SSH to known
+# IP ranges and place HTTP/HTTPS behind a load balancer or WAF.
+# See: https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html
+
 resource "aws_security_group_rule" "ingress" {
   count             = length(var.ingress_rules)
   type              = "ingress"

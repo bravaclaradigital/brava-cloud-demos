@@ -44,6 +44,10 @@ resource "azurerm_subnet" "this" {
   address_prefixes     = each.value.address_prefixes
 }
 
+# DEMO NOTE: The AllowRDP rule below permits RDP from any source (0.0.0.0/0).
+# This is intentional for demo accessibility. In production, restrict the
+# source_address_prefix to known IP ranges or a Bastion subnet only.
+# See: https://learn.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview
 resource "azurerm_network_security_group" "this" {
   name                = "nsg-brava-${var.environment}"
   location            = var.location

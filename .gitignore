@@ -1,6 +1,8 @@
 # Terraform
 *.tfstate
 *.tfstate.*
+backend.hcl
+!backend.hcl.example
 *.tfvars
 !*.tfvars.example
 !*.tfvars.json

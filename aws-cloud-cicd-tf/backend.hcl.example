@@ -1,0 +1,7 @@
+# Copy this file to backend.hcl (gitignored) and fill in your values.
+# Usage: terraform init -backend-config=backend.hcl
+#
+# Find your account ID: aws sts get-caller-identity --query Account --output text
+
+bucket         = "brava-tfstate-<YOUR_AWS_ACCOUNT_ID>"
+dynamodb_table = "brava-terraform-locks"

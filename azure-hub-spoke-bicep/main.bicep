@@ -83,6 +83,29 @@ module spoke3 'modules/spoke-network.bicep' = {
   }
 }
 
+// Log Analytics Workspace in spoke3. Central logging for all workloads.
+// VMs and services in other spokes can send diagnostics here via the hub.
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
+  name: 'law-brava-${environment}'
+  location: location
+  properties: {
+    sku: {
+      name: 'PerGB2018'
+    }
+    retentionInDays: 30
+    features: {
+      enableLogAccessUsingOnlyResourcePermissions: true
+    }
+  }
+  tags: {
+    Environment: environment
+    Project: 'brava-cloud-demos'
+    ManagedBy: 'Bicep'
+    CostCenter: 'brava-demos'
+    Purpose: 'Monitoring'
+  }
+}
+
 // Connectivity (Peering)
 module connectivity 'modules/connectivity.bicep' = {
   name: 'connectivity-deployment'
@@ -104,3 +127,5 @@ output spoke2VnetId string = spoke2.outputs.vnetId
 output spoke3VnetId string = spoke3.outputs.vnetId
 output bastionPublicIp string = hub.outputs.bastionPublicIp
 output bastionHostname string = hub.outputs.bastionHostname
+output logAnalyticsWorkspaceId string = logAnalyticsWorkspace.id
+output logAnalyticsWorkspaceName string = logAnalyticsWorkspace.name

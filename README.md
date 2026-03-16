@@ -1,47 +1,55 @@
 # Brava Cloud Infrastructure Demos
 
-Production-ready cloud infrastructure demonstrations showcasing modern DevOps, Infrastructure as Code, and automation practices.
-
-## Overview
-
-This repository contains **three distinct cloud infrastructure demo projects**, each demonstrating enterprise-grade cloud architecture patterns and automation workflows. These demos are designed to be deployed, explored in real-time, and torn down cleanly—ideal for technical demonstrations and proof-of-concept validation.
+Production-ready cloud infrastructure demonstrations showcasing modern DevOps, Infrastructure as Code, and automation practices. Built for rapid deployment, live presentations, and proof-of-concept validation.
 
 ## Demo Projects
 
-### 🏗️ **1. Azure Landing Zone with Terraform Modules**
-A modular Azure infrastructure deployment showcasing:
-- Subscription and resource group governance
-- Network topology and segmentation
-- Role-based access control (RBAC) and identity management
-- Reusable Terraform modules for scalability
-- CI/CD pipeline integration
+| Demo | Cloud | IaC Tool | Deploy Time | Hourly Cost | Destroy Time |
+|------|-------|----------|-------------|-------------|--------------|
+| [Azure Landing Zone](azure-landing-zone-tf/) | Azure | Terraform | ~3-5 min | **$0.00** | ~2 min |
+| [AWS Cloud CI/CD](aws-cloud-cicd-tf/) | AWS | Terraform | ~2-3 min | **~$0.07** | ~3 min |
+| [Azure Hub-Spoke](azure-hub-spoke-bicep/) | Azure | Bicep | ~5-7 min | **~$0.20** | ~2 min |
 
-**Use Case:** Enterprise organizations modernizing Azure infrastructure with repeatable, scalable patterns.
+Each demo is fully independent. Deploy one or all three.
 
 ---
 
-### 🌐 **2. Azure Hub-Spoke Architecture with Bicep**
-A complete hub-spoke network topology demonstrating:
-- Central hub virtual network with shared services
-- Spoke virtual networks for workload isolation
-- Virtual network peering and routing
-- Azure Bastion for secure access
-- Application Gateway and load balancing
-- Infrastructure as Code with Microsoft Bicep
+### 1. Azure Landing Zone with Terraform Modules
 
-**Use Case:** Organizations needing multi-workload Azure environments with centralized security and management.
+Governance, networking, and RBAC patterns for enterprise Azure.
+
+- Three resource groups (Management, Networking, Workload)
+- VNet with segmented subnets (jumphost, workload, management)
+- Custom RBAC role with scoped assignments
+- Zero ongoing cost (networking only)
+
+[View README](azure-landing-zone-tf/README.md)
 
 ---
 
-### ☁️ **3. AWS Cloud CI/CD with Terraform**
-A complete CI/CD pipeline demonstration with AWS infrastructure:
-- VPC with public/private subnets and NAT
-- Security groups and IAM roles with least-privilege
-- EC2 instances with auto-scaling capabilities
-- GitHub Actions integration for Infrastructure as Code
-- Automated testing and secure credential management
+### 2. AWS Cloud CI/CD with Terraform
 
-**Use Case:** Organizations standardizing Infrastructure as Code deployments across cloud platforms with robust CI/CD practices.
+Complete CI/CD-ready infrastructure on AWS.
+
+- VPC with public/private subnets across 2 AZs
+- NAT Gateway for private subnet egress
+- EC2 with Apache (browse to public IP after deploy)
+- IAM least-privilege roles, GitHub Actions automation
+
+[View README](aws-cloud-cicd-tf/README.md)
+
+---
+
+### 3. Azure Hub-Spoke Architecture with Bicep
+
+Multi-workload network isolation with centralized security.
+
+- Hub VNet with Azure Bastion (no public IPs on workloads)
+- Three spoke VNets (App, Database, Monitoring)
+- Bidirectional VNet peering
+- Log Analytics Workspace for centralized logging
+
+[View README](azure-hub-spoke-bicep/README.md)
 
 ---
 
@@ -49,26 +57,35 @@ A complete CI/CD pipeline demonstration with AWS infrastructure:
 
 ```
 brava-cloud-demos/
-├── .github/workflows/          # Independent CI/CD pipelines
-├── azure-landing-zone-tf/      # Demo 1: Azure Landing Zone
-├── azure-hub-spoke-bicep/      # Demo 2: Hub-Spoke with Bicep
-└── aws-cloud-cicd-tf/          # Demo 3: AWS Cloud CI/CD
+├── .github/workflows/            # Independent CI/CD pipelines per demo
+│   ├── deploy-aws-cloud-cicd.yml
+│   ├── deploy-azure-landing-zone.yml
+│   ├── deploy-azure-hub-spoke.yml
+│   └── drift-detection.yml       # Daily drift check across all demos
+├── aws-cloud-cicd-tf/            # Demo: AWS CI/CD
+│   ├── modules/                  # vpc, security-group, iam, compute
+│   ├── backend.hcl.example       # Copy to backend.hcl for local init
+│   └── README.md
+├── azure-landing-zone-tf/        # Demo: Azure Landing Zone
+│   ├── modules/                  # resource-group, network, rbac
+│   ├── backend.hcl.example       # Copy to backend.hcl for local init
+│   └── README.md
+└── azure-hub-spoke-bicep/        # Demo: Hub-Spoke
+    ├── modules/                  # hub-network, spoke-network, connectivity
+    └── README.md
 ```
-
-## Key Features Across All Demos
-
-✅ **Production-Ready Code** — Enterprise patterns, error handling, modularity  
-✅ **Rapid Deploy/Teardown** — Perfect for 30-45 minute demos  
-✅ **Cloud Best Practices** — Security, cost optimization, compliance  
-✅ **Full CI/CD Integration** — Automated testing and deployment  
-✅ **Modular Design** — Reusable components for real-world projects  
 
 ## GitHub Actions Workflows
 
-Each demo has its own independent CI/CD workflow that can be triggered manually:
-- **Terraform validation & plan** for infrastructure changes
-- **Automated deployment** via GitHub Actions
-- **Destroy infrastructure** for cleanup after demos
+All workflows use `workflow_dispatch` with an `action` input (`apply` or `destroy`):
+
+1. Run from the **Actions** tab in GitHub
+2. Click **Run workflow**
+3. Select `apply` to deploy or `destroy` to tear down
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) to add a new demo or update an existing one.
 
 ---
 

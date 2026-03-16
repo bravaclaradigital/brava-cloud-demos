@@ -84,5 +84,6 @@ locals {
     Environment = var.environment
     Project     = "brava-cloud-demos"
     ManagedBy   = "Terraform"
+    CostCenter  = "brava-demos"
   }
 }
