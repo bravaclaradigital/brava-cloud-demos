@@ -82,7 +82,7 @@ jobs:
           ARM_CLIENT_SECRET: ${{ fromJSON(secrets.AZURE_CREDENTIALS).clientSecret }}
           ARM_SUBSCRIPTION_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).subscriptionId }}
           ARM_TENANT_ID: ${{ fromJSON(secrets.AZURE_CREDENTIALS).tenantId }}
-        run: terraform init
+        run: terraform init -backend-config="resource_group_name=${{ secrets.AZ_TF_STATE_RESOURCE_GROUP }}" -backend-config="storage_account_name=${{ secrets.AZ_TF_STATE_STORAGE_ACCOUNT }}"
 
       - name: Terraform Plan (drift check)
         id: plan
