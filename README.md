@@ -2,10 +2,6 @@
 
 Production-ready cloud infrastructure demonstrations showcasing modern DevOps, Infrastructure as Code, and automation practices. Built for rapid deployment, live presentations, and proof-of-concept validation.
 
-## About
-
-This repository contains hands-on Azure and AWS infrastructure demos that highlight practical cloud architecture, Infrastructure as Code, CI/CD automation, and environment teardown workflows for fast demos and proof-of-concept work.
-
 ## Demo Projects
 
 | Demo | Cloud | IaC Tool | Deploy Time | Hourly Cost | Destroy Time |
